@@ -53,16 +53,21 @@ async def recover_on_startup() -> dict:
             report["interrupted"].append({"id": app.id, "company": app.company, "role": app.job_title})
             report["action_taken"].append(f"Marked #{app.id} {app.company}/{app.job_title} as INTERRUPTED")
 
+        # Include already-interrupted records on every startup so review remains visible.
+        result = await session.execute(select(Application).where(Application.status == ApplicationStatus.INTERRUPTED))
+        report["interrupted"] = [{"id": app.id, "company": app.company, "role": app.job_title} for app in result.scalars().all()]
+
         # Reset the global agent state to STOPPED (in case it was stuck RUNNING)
         result = await session.execute(select(AgentState).where(AgentState.id == 1))
         state = result.scalar_one_or_none()
         if state and state.state not in (AgentStateEnum.STOPPED, AgentStateEnum.ERROR):
+            previous_state = state.state
             state.state = AgentStateEnum.STOPPED
             state.stop_requested = False
             state.pause_requested = False
             state.force_kill_requested = False
             state.stopped_at = datetime.now(timezone.utc)
-            report["action_taken"].append(f"Reset stuck agent state from {state.state.value} to STOPPED")
+            report["action_taken"].append(f"Reset stuck agent state from {previous_state.value} to STOPPED")
 
         # Find paused applications eligible to resume
         result = await session.execute(

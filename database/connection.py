@@ -89,6 +89,8 @@ async def init_db():
         
         # Incremental column migrations for SQLite
         columns_to_add = [
+            ("normalized_company", "TEXT"),
+            ("normalized_job_title", "TEXT"),
             ("review_required", "BOOLEAN DEFAULT 1"),
             ("review_completed", "BOOLEAN DEFAULT 0"),
             ("submission_confirmed_by_user", "BOOLEAN DEFAULT 0"),
@@ -99,3 +101,17 @@ async def init_db():
                 await conn.execute(text(f"ALTER TABLE applications ADD COLUMN {col_name} {col_type}"))
             except Exception:
                 pass  # Column already exists
+
+        # Backfill only legacy rows; future ORM writes maintain these identities.
+        from jobs.dedupe import normalize_text, normalize_url
+        rows = (await conn.execute(text("SELECT id, company, job_title, job_url FROM applications WHERE normalized_company IS NULL OR normalized_job_title IS NULL"))).mappings().all()
+        if rows:
+            await conn.execute(text("UPDATE applications SET normalized_company=:company, normalized_job_title=:title, canonical_job_url=:url WHERE id=:id"),
+                [{"id":row["id"],"company":normalize_text(row["company"]),"title":normalize_text(row["job_title"]),"url":normalize_url(row["job_url"])} for row in rows])
+        for name,columns in [
+            ("ix_applications_normalized_identity","normalized_company,normalized_job_title,status"),
+            ("ix_applications_canonical_url","canonical_job_url"),
+            ("ix_applications_job_url","job_url"),
+            ("ix_applications_external_job_id","external_job_id"),
+        ]:
+            await conn.execute(text(f"CREATE INDEX IF NOT EXISTS {name} ON applications ({columns})"))

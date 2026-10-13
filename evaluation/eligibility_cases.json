@@ -1,0 +1,237 @@
+{
+  "description": "Hand-labeled synthetic regression cases; not a real-job accuracy estimate.",
+  "profile": {
+    "education": [
+      {
+        "degree": "B.S. in Computer Science",
+        "graduation": "Fall 2027"
+      }
+    ],
+    "preferences": {
+      "excluded_companies": [
+        "Fictional Excluded"
+      ],
+      "excluded_keywords": [
+        "door-to-door"
+      ]
+    }
+  },
+  "cases": [
+    {
+      "id": "us-intern",
+      "expected_status": "eligible",
+      "job": {
+        "company": "Fictional Labs",
+        "job_title": "Software Engineering Intern",
+        "location": "Austin, TX",
+        "country": "US",
+        "employment_type": "internship",
+        "job_description": "Undergraduate software internship using Python and SQL."
+      }
+    },
+    {
+      "id": "canada-onsite",
+      "expected_status": "ineligible",
+      "job": {
+        "company": "Fictional Labs",
+        "job_title": "Software Engineering Intern",
+        "location": "Toronto",
+        "country": "Canada",
+        "employment_type": "internship",
+        "job_description": "Undergraduate software internship using Python and SQL."
+      }
+    },
+    {
+      "id": "senior-role",
+      "expected_status": "ineligible",
+      "job": {
+        "company": "Fictional Labs",
+        "job_title": "Senior Software Engineer Intern",
+        "location": "Austin, TX",
+        "country": "US",
+        "employment_type": "internship",
+        "job_description": "Undergraduate software internship using Python and SQL."
+      }
+    },
+    {
+      "id": "full-time-role",
+      "expected_status": "ineligible",
+      "job": {
+        "company": "Fictional Labs",
+        "job_title": "Software Engineer",
+        "location": "Austin, TX",
+        "country": "US",
+        "employment_type": "full-time",
+        "job_description": "Undergraduate software internship using Python and SQL."
+      }
+    },
+    {
+      "id": "citizenship-required",
+      "expected_status": "ineligible",
+      "job": {
+        "company": "Fictional Labs",
+        "job_title": "Software Engineering Intern",
+        "location": "Austin, TX",
+        "country": "US",
+        "employment_type": "internship",
+        "job_description": "Must be a U.S. citizen."
+      }
+    },
+    {
+      "id": "residency-required",
+      "expected_status": "ineligible",
+      "job": {
+        "company": "Fictional Labs",
+        "job_title": "Software Engineering Intern",
+        "location": "Austin, TX",
+        "country": "US",
+        "employment_type": "internship",
+        "job_description": "Permanent residency required."
+      }
+    },
+    {
+      "id": "clearance-required",
+      "expected_status": "ineligible",
+      "job": {
+        "company": "Fictional Labs",
+        "job_title": "Software Engineering Intern",
+        "location": "Austin, TX",
+        "country": "US",
+        "employment_type": "internship",
+        "job_description": "Undergraduate software internship using Python and SQL.",
+        "clearance_required": true
+      }
+    },
+    {
+      "id": "doctorate-only",
+      "expected_status": "ineligible",
+      "job": {
+        "company": "Fictional Labs",
+        "job_title": "Software Engineering Intern",
+        "location": "Austin, TX",
+        "country": "US",
+        "employment_type": "internship",
+        "job_description": "PhD only."
+      }
+    },
+    {
+      "id": "sponsorship-review",
+      "expected_status": "needs_review",
+      "job": {
+        "company": "Fictional Labs",
+        "job_title": "Software Engineering Intern",
+        "location": "Austin, TX",
+        "country": "US",
+        "employment_type": "internship",
+        "job_description": "No sponsorship available."
+      }
+    },
+    {
+      "id": "unrestricted-review",
+      "expected_status": "needs_review",
+      "job": {
+        "company": "Fictional Labs",
+        "job_title": "Software Engineering Intern",
+        "location": "Austin, TX",
+        "country": "US",
+        "employment_type": "internship",
+        "job_description": "Must have unrestricted U.S. work authorization."
+      }
+    },
+    {
+      "id": "graduation-too-late",
+      "expected_status": "ineligible",
+      "job": {
+        "company": "Fictional Labs",
+        "job_title": "Software Engineering Intern",
+        "location": "Austin, TX",
+        "country": "US",
+        "employment_type": "internship",
+        "job_description": "Must graduate by 2026."
+      }
+    },
+    {
+      "id": "graduation-exact-year",
+      "expected_status": "ineligible",
+      "job": {
+        "company": "Fictional Labs",
+        "job_title": "Software Engineering Intern",
+        "location": "Austin, TX",
+        "country": "US",
+        "employment_type": "internship",
+        "job_description": "Must graduate in 2028."
+      }
+    },
+    {
+      "id": "graduation-inclusive-range",
+      "expected_status": "eligible",
+      "job": {
+        "company": "Fictional Labs",
+        "job_title": "Software Engineering Intern",
+        "location": "Austin, TX",
+        "country": "US",
+        "employment_type": "internship",
+        "job_description": "Must graduate between 2026 and 2028."
+      }
+    },
+    {
+      "id": "different-candidate-year",
+      "expected_status": "ineligible",
+      "job": {
+        "company": "Fictional Labs",
+        "job_title": "Software Engineering Intern",
+        "location": "Austin, TX",
+        "country": "US",
+        "employment_type": "internship",
+        "job_description": "Must graduate between 2026 and 2028."
+      },
+      "education": [
+        {
+          "degree": "B.S. in Computer Science",
+          "graduation": "Fall 2029"
+        }
+      ]
+    },
+    {
+      "id": "missing-candidate-year",
+      "expected_status": "needs_review",
+      "job": {
+        "company": "Fictional Labs",
+        "job_title": "Software Engineering Intern",
+        "location": "Austin, TX",
+        "country": "US",
+        "employment_type": "internship",
+        "job_description": "Must graduate in 2027."
+      },
+      "education": [
+        {
+          "degree": "B.S. in Computer Science"
+        }
+      ]
+    },
+    {
+      "id": "excluded-company",
+      "expected_status": "ineligible",
+      "job": {
+        "company": "Fictional Excluded Inc.",
+        "job_title": "Software Engineering Intern",
+        "location": "Austin, TX",
+        "country": "US",
+        "employment_type": "internship",
+        "job_description": "Undergraduate software internship using Python and SQL."
+      }
+    },
+    {
+      "id": "excluded-keyword",
+      "expected_status": "ineligible",
+      "job": {
+        "company": "Fictional Labs",
+        "job_title": "Software Engineering Intern",
+        "location": "Austin, TX",
+        "country": "US",
+        "employment_type": "internship",
+        "job_description": "Internship selling door-to-door subscriptions."
+      }
+    }
+  ]
+}

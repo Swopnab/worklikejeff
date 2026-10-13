@@ -2,7 +2,7 @@
 
 A local job search companion: discover opportunities, compare them with verified experience, prepare tailored résumés, and organize applications for human review.
 
-**[Website](https://swopnab.github.io/worklikeadog/) · [Interactive demo](https://swopnab.github.io/worklikeadog/demo.html) · [Architecture](docs/ARCHITECTURE.md)**
+**[Website](https://swopnab.github.io/worklikejeff/) · [Interactive demo](https://swopnab.github.io/worklikejeff/demo.html) · [Architecture](docs/ARCHITECTURE.md)**
 
 The public demo uses fictional jobs and browser storage. The full Python application runs on your computer and stores your profile, application records, and documents locally. It never auto-submits applications.
 
@@ -11,8 +11,8 @@ The public demo uses fictional jobs and browser storage. The full Python applica
 Requires **Python 3.11+**. Run these commands from the repository root:
 
 ```sh
-git clone https://github.com/Swopnab/worklikeadog.git
-cd worklikeadog
+git clone https://github.com/Swopnab/worklikejeff.git
+cd worklikejeff
 python3 setup.py
 .venv/bin/python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000
 ```
@@ -83,3 +83,18 @@ Open `http://127.0.0.1:4174`. GitHub Actions publishes `site/` to GitHub Pages o
 This is an application preparation toolkit, not a guarantee of eligibility, interviews, or employer compatibility. Match scores are heuristics. Immigration/legal questions need personal review. A generated résumé must be checked against your real experience; editing the project registry can change its claims. The browser demo provides keyword overlap only, without AI, eligibility checks, PDF generation, or employer interactions.
 
 See [Agent Safety](docs/AGENT_SAFETY.md), [Résumé Rules](docs/RESUME_RULES.md), and [Application State Machine](docs/APPLICATION_STATE_MACHINE.md) for the enforced workflow.
+
+## Reproducible evaluation
+
+```sh
+.venv/bin/python scripts/evaluate_jobs.py --output evaluation/results.json
+.venv/bin/python scripts/benchmark_dedupe.py --output evaluation/dedupe-benchmark.json
+```
+
+The labeled fixture uses fictional postings and candidate profiles. Its confusion matrix checks eligible/ineligible/review decisions, graduation ranges, and skill-name boundaries; it is a regression set, not an estimate of accuracy on real jobs. Matching never treats JavaScript as verified Java or C++ as verified C. Graduation checks use the candidate's education instead of a fixed year.
+
+The duplicate benchmark creates isolated 1,000- and 10,000-record SQLite databases and reports p50/p95 timings for URL hits, normalized identity hits, and misses. Indexed normalized identity avoids scanning every in-progress application. Legacy rows are backfilled on startup, preserving their IDs; new ORM writes keep the identity current. Bulk SQL writers must provide normalized identity fields explicitly.
+
+Recovery regression tests simulate persisted mid-flight work and consecutive restarts. Interrupted applications remain visible for review, completed applications remain completed, and repeated recovery does not duplicate recovery logs or retry submission.
+
+Before reporting real-world quality, label a separate sample of actual postings without tuning on it. Record false accepts/rejects, ambiguous cases, and missing skills. Ask a few consenting students to try preparation with fictional or their own data, record setup failures and time spent reviewing, and fix the observed issues. No user counts or real-job accuracy claims are inferred from these fixtures.

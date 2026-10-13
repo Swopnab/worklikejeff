@@ -42,8 +42,10 @@ class EligibilityChecker:
         self.profile = profile
         self.education = (profile.get("education") or [{}])[0]
         self.degree = self.education.get("degree", "B.S. in Computer Science")
-        self.grad_year = 2027
-        self.grad_semester = "Fall 2027"
+        graduation = str(self.education.get("graduation_year") or self.education.get("graduation") or "")
+        year = re.search(r"\b(20\d{2})\b", graduation)
+        self.grad_year = int(year.group(1)) if year else None
+        self.grad_semester = str(self.education.get("graduation") or graduation)
         self.preferences = profile.get("preferences") or {}
         self.excluded_companies = [c.lower() for c in self.preferences.get("excluded_companies", [])]
         self.excluded_keywords = [k.lower() for k in self.preferences.get("excluded_keywords", [])]
@@ -153,14 +155,21 @@ class EligibilityChecker:
             failed_checks.append("degree_level")
             reasons.append("Requires Ph.D. / Doctorate degree; candidate is pursuing B.S. in Computer Science.")
 
-        # 7. Graduation Window Check (Fall 2027)
-        grad_window_m = re.search(r"must (?:graduate|have graduation date) (?:between|by|in)\s+([a-zA-Z0-9\s,-]+)", desc)
+        # 7. Graduation window against the candidate's recorded year
+        grad_window_m = re.search(r"must (?:graduate|have graduation date) (?P<rule>between|by|in)\s+(?P<window>[a-zA-Z0-9\s,-]+)", desc)
         if grad_window_m:
-            window_str = grad_window_m.group(1)
-            years_in_window = [int(y) for y in re.findall(r"\b(202[4-9]|203[0-5])\b", window_str)]
-            if years_in_window and all(y != 2027 for y in years_in_window) and all(y < 2027 for y in years_in_window):
+            window_str = grad_window_m.group("window")
+            years_in_window = [int(y) for y in re.findall(r"\b(20\d{2})\b", window_str)]
+            if years_in_window and self.grad_year is None:
+                requires_user_review = True
+                review_reason = "Posting specifies a graduation window; the candidate's graduation year is missing."
+            elif years_in_window and self.grad_year is not None and (
+                (grad_window_m.group("rule") == "by" and max(years_in_window) < self.grad_year)
+                or (grad_window_m.group("rule") == "in" and self.grad_year not in years_in_window)
+                or (grad_window_m.group("rule") == "between" and not min(years_in_window) <= self.grad_year <= max(years_in_window))
+            ):
                 failed_checks.append("graduation_window")
-                reasons.append(f"Graduation requirement specifies ({window_str}) which excludes Fall 2027.")
+                reasons.append(f"Graduation requirement specifies ({window_str}) which excludes {self.grad_semester}.")
 
         # 8. NO-SPONSORSHIP / UNRESTRICTED WORK AUTH LANGUAGE -> Flag for NEEDS_REVIEW
         if not failed_checks:

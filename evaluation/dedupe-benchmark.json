@@ -1,0 +1,43 @@
+{
+  "fixture": "synthetic local SQLite; no model/browser/network workload",
+  "python": "3.14.7",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "runs": [
+    {
+      "records": 1000,
+      "iterations_per_query": 50,
+      "queries": {
+        "url-hit": {
+          "p50_ms": 0.272,
+          "p95_ms": 0.306
+        },
+        "identity-hit": {
+          "p50_ms": 0.553,
+          "p95_ms": 0.664
+        },
+        "miss": {
+          "p50_ms": 0.546,
+          "p95_ms": 0.661
+        }
+      }
+    },
+    {
+      "records": 10000,
+      "iterations_per_query": 50,
+      "queries": {
+        "url-hit": {
+          "p50_ms": 0.251,
+          "p95_ms": 0.295
+        },
+        "identity-hit": {
+          "p50_ms": 0.551,
+          "p95_ms": 0.618
+        },
+        "miss": {
+          "p50_ms": 0.53,
+          "p95_ms": 0.553
+        }
+      }
+    }
+  ]
+}

@@ -85,6 +85,7 @@ class JobMatchEngine:
         aliases = {
             "python3": "python",
             "py": "python",
+            "golang": "go",
             "js": "javascript",
             "ts": "typescript",
             "reactjs": "react",
@@ -112,18 +113,29 @@ class JobMatchEngine:
         }
         return aliases.get(s, s)
 
+    @staticmethod
+    def _skills_overlap(a: str, b: str) -> bool:
+        if not a or not b:
+            return False
+        if a == b:
+            return True
+        # Boundaries also exclude +/#, so C cannot match C++ or C#.
+        # Qualified names such as "Java 17" and "C programming" still match.
+        return bool(re.search(r"(?<![\w+#])" + re.escape(a) + r"(?![\w+#])", b)
+                    or re.search(r"(?<![\w+#])" + re.escape(b) + r"(?![\w+#])", a))
+
     def _match_skill(self, skill_name: str) -> Tuple[bool, str]:
         """Check if candidate has this skill (verified or exposure)."""
         norm = self._normalize_skill(skill_name)
         
         # Direct check in verified skills
         for vs in self.verified_skills:
-            if norm == vs or norm in vs or vs in norm:
+            if self._skills_overlap(norm, self._normalize_skill(vs)):
                 return True, "verified"
                 
         # Direct check in exposure skills
         for es in self.exposure_skills:
-            if norm == es or norm in es or es in norm:
+            if self._skills_overlap(norm, self._normalize_skill(es)):
                 return True, "exposure"
                 
         return False, "missing"
@@ -308,10 +320,10 @@ class JobMatchEngine:
             # 3. Keyword / Tech overlap bonus
             match_count = 0
             for t in tech:
-                if t in text_context or re.search(r'\b' + re.escape(t) + r'\b', text_context):
+                if t and re.search(r'(?<!\w)' + re.escape(t) + r'(?![\w+#])', text_context):
                     match_count += 1
             for k in keywords:
-                if k in text_context or re.search(r'\b' + re.escape(k) + r'\b', text_context):
+                if k and re.search(r'(?<!\w)' + re.escape(k) + r'(?![\w+#])', text_context):
                     match_count += 1
             
             overlap_score = min(25.0, match_count * 4.0)

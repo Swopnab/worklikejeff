@@ -22,6 +22,14 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y texlive-latex-extra texlive-fonts-recommended lmodern
       - name: Run application tests
         run: python -m pytest -q
+      - name: Check labeled evaluation and measure local duplicate queries
+        run: |
+          python scripts/evaluate_jobs.py --output evaluation/results.json
+          python scripts/benchmark_dedupe.py --output evaluation/dedupe-benchmark.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: synthetic-evaluation
+          path: evaluation/*.json
       - name: Check JavaScript
         run: |
           node --check frontend/js/app.js
