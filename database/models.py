@@ -279,3 +279,11 @@ def maintain_job_identity(mapper, connection, application):
     application.normalized_company = normalize_text(application.company)
     application.normalized_job_title = normalize_text(application.job_title)
     application.canonical_job_url = normalize_url(application.job_url)
+
+
+class TrackerWorkspace(Base):
+    """One versioned personal tracker snapshot; never changes agent records."""
+    __tablename__ = 'tracker_workspace'
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    revision: Mapped[int] = mapped_column(Integer, nullable=False)
+    items_json: Mapped[str] = mapped_column(Text, nullable=False)

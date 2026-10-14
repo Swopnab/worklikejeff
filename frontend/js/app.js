@@ -27,6 +27,7 @@ function navigate(page) {
   if (navEl)  navEl.classList.add('active');
 
   currentPage = page;
+  document.body.classList.toggle('tracker-page', page === 'tracker');
   document.title = `WorkLikeADog — ${capitalize(page)}`;
 
   switch (page) {

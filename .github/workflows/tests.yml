@@ -34,3 +34,6 @@ jobs:
         run: |
           node --check frontend/js/app.js
           node --check site/demo.js
+          node --check frontend/tracker/app.js
+          node --check frontend/tracker/data.js
+          node --test tests/tracker_data.test.cjs
