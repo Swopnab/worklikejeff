@@ -68,7 +68,7 @@ def normalize_text(text: str) -> str:
         return ""
     text = text.lower()
     # Normalize common abbreviations
-    text = re.sub(r"\binc\.?|\bllc\.?|\bcorp\.?|\bcorporation|\bco\.?", "", text)
+    text = re.sub(r"\b(?:inc|llc|corp|corporation|co)\b\.?", "", text)
     # Remove punctuation
     text = re.sub(r"[^\w\s]", " ", text)
     # Collapse multiple spaces
@@ -128,7 +128,7 @@ async def check_duplicate(
                 )
             )
         )
-        existing = result.scalar_one_or_none()
+        existing = result.scalars().first()
         if existing:
             return True, existing, f"Exact URL match (App #{existing.id}, status: {existing.status.value})"
 
@@ -155,7 +155,7 @@ async def check_duplicate(
                 )
             )
         )
-        existing = result.scalar_one_or_none()
+        existing = result.scalars().first()
         if existing:
             return True, existing, f"Identical job description hash (App #{existing.id})"
 
@@ -165,19 +165,16 @@ async def check_duplicate(
     if norm_comp and norm_titl:
         result = await session.execute(
             select(Application).where(
+                Application.normalized_company == norm_comp,
+                Application.normalized_job_title == norm_titl,
                 Application.status.in_([
-                    ApplicationStatus.SUBMITTED,
-                    ApplicationStatus.APPLYING,
-                    ApplicationStatus.READY,
-                    ApplicationStatus.PAUSED,
-                    ApplicationStatus.NEEDS_ATTENTION,
-                    ApplicationStatus.NEEDS_REVIEW
+                    ApplicationStatus.SUBMITTED, ApplicationStatus.APPLYING, ApplicationStatus.READY,
+                    ApplicationStatus.PAUSED, ApplicationStatus.NEEDS_ATTENTION, ApplicationStatus.NEEDS_REVIEW
                 ])
             )
         )
-        for existing in result.scalars().all():
-            if (normalize_text(existing.company) == norm_comp and
-                normalize_text(existing.job_title) == norm_titl):
-                return True, existing, f"Same company & title already applied/in-progress (App #{existing.id})"
+        existing = result.scalars().first()
+        if existing:
+            return True, existing, f"Same company & title already applied/in-progress (App #{existing.id})"
 
     return False, None, ""

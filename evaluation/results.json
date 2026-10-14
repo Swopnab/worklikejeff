@@ -1,0 +1,167 @@
+{
+  "dataset": "synthetic regression examples; not hiring/legal/real-world accuracy",
+  "python": "3.14.7",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "iterations_per_case": 100,
+  "eligibility_cases": 17,
+  "correct": 17,
+  "confusion_matrix": {
+    "eligible": {
+      "eligible": 2,
+      "ineligible": 0,
+      "needs_review": 0
+    },
+    "ineligible": {
+      "eligible": 0,
+      "ineligible": 12,
+      "needs_review": 0
+    },
+    "needs_review": {
+      "eligible": 0,
+      "ineligible": 0,
+      "needs_review": 3
+    }
+  },
+  "false_eligible": 0,
+  "false_ineligible": 0,
+  "latency_ms": {
+    "p50": 0.0163,
+    "p95": 0.0176
+  },
+  "predictions": [
+    {
+      "id": "us-intern",
+      "expected": "eligible",
+      "actual": "eligible",
+      "correct": true
+    },
+    {
+      "id": "canada-onsite",
+      "expected": "ineligible",
+      "actual": "ineligible",
+      "correct": true
+    },
+    {
+      "id": "senior-role",
+      "expected": "ineligible",
+      "actual": "ineligible",
+      "correct": true
+    },
+    {
+      "id": "full-time-role",
+      "expected": "ineligible",
+      "actual": "ineligible",
+      "correct": true
+    },
+    {
+      "id": "citizenship-required",
+      "expected": "ineligible",
+      "actual": "ineligible",
+      "correct": true
+    },
+    {
+      "id": "residency-required",
+      "expected": "ineligible",
+      "actual": "ineligible",
+      "correct": true
+    },
+    {
+      "id": "clearance-required",
+      "expected": "ineligible",
+      "actual": "ineligible",
+      "correct": true
+    },
+    {
+      "id": "doctorate-only",
+      "expected": "ineligible",
+      "actual": "ineligible",
+      "correct": true
+    },
+    {
+      "id": "sponsorship-review",
+      "expected": "needs_review",
+      "actual": "needs_review",
+      "correct": true
+    },
+    {
+      "id": "unrestricted-review",
+      "expected": "needs_review",
+      "actual": "needs_review",
+      "correct": true
+    },
+    {
+      "id": "graduation-too-late",
+      "expected": "ineligible",
+      "actual": "ineligible",
+      "correct": true
+    },
+    {
+      "id": "graduation-exact-year",
+      "expected": "ineligible",
+      "actual": "ineligible",
+      "correct": true
+    },
+    {
+      "id": "graduation-inclusive-range",
+      "expected": "eligible",
+      "actual": "eligible",
+      "correct": true
+    },
+    {
+      "id": "different-candidate-year",
+      "expected": "ineligible",
+      "actual": "ineligible",
+      "correct": true
+    },
+    {
+      "id": "missing-candidate-year",
+      "expected": "needs_review",
+      "actual": "needs_review",
+      "correct": true
+    },
+    {
+      "id": "excluded-company",
+      "expected": "ineligible",
+      "actual": "ineligible",
+      "correct": true
+    },
+    {
+      "id": "excluded-keyword",
+      "expected": "ineligible",
+      "actual": "ineligible",
+      "correct": true
+    }
+  ],
+  "skill_cases": [
+    {
+      "skill": "Java",
+      "expected_match": false,
+      "actual_match": false
+    },
+    {
+      "skill": "JavaScript",
+      "expected_match": true,
+      "actual_match": true
+    },
+    {
+      "skill": "C",
+      "expected_match": false,
+      "actual_match": false
+    },
+    {
+      "skill": "C++",
+      "expected_match": true,
+      "actual_match": true
+    },
+    {
+      "skill": "Python3",
+      "expected_match": true,
+      "actual_match": true
+    },
+    {
+      "skill": "TypeScript",
+      "expected_match": false,
+      "actual_match": false
+    }
+  ]
+}

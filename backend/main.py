@@ -16,7 +16,7 @@ from fastapi.responses import FileResponse
 from config.settings import settings
 from database.connection import init_db
 from agent.recovery import recover_on_startup
-from backend.api import agent, applications, jobs, profile, resume, discovery, webhooks
+from backend.api import agent, applications, jobs, profile, resume, discovery, webhooks, tracker
 
 # ============================================================
 # Logging setup
@@ -88,6 +88,7 @@ app.include_router(discovery.router, prefix="/api/discovery", tags=["Discovery"]
 app.include_router(jobs.router, prefix="/api/jobs", tags=["Jobs"])
 app.include_router(profile.router, prefix="/api/profile", tags=["Profile"])
 app.include_router(resume.router, prefix="/api/resume", tags=["Resume"])
+app.include_router(tracker.router, prefix="/api/tracker", tags=["Job Tracker"])
 app.include_router(webhooks.router, prefix="/api/webhooks", tags=["Webhooks"])
 
 @app.get("/api/health")

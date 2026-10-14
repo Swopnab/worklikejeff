@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 from typing import Optional
 
 from sqlalchemy import (
-    Boolean, DateTime, Enum, Float, ForeignKey,
+    Boolean, DateTime, Enum, Float, ForeignKey, event,
     Integer, String, Text, UniqueConstraint, Index,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
@@ -113,6 +113,8 @@ class Application(Base):
     job_title: Mapped[str] = mapped_column(String(500), nullable=False, index=True)
     job_url: Mapped[str] = mapped_column(Text, nullable=False)
     canonical_job_url: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    normalized_company: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    normalized_job_title: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
     source: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)  # greenhouse, lever, linkedin, manual
     location: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     remote_type: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)  # remote, hybrid, onsite
@@ -175,6 +177,10 @@ class Application(Base):
 
     __table_args__ = (
         Index("ix_applications_company_title", "company", "job_title"),
+        Index("ix_applications_normalized_identity", "normalized_company", "normalized_job_title", "status"),
+        Index("ix_applications_canonical_url", "canonical_job_url"),
+        Index("ix_applications_job_url", "job_url"),
+        Index("ix_applications_external_job_id", "external_job_id"),
         Index("ix_applications_status_discovered", "status", "discovered_at"),
     )
 
@@ -264,3 +270,20 @@ class JobQueue(Base):
 
     def __repr__(self) -> str:
         return f"<JobQueue id={self.id} url={self.job_url[:50]!r} processed={self.processed}>"
+
+
+@event.listens_for(Application, "before_insert")
+@event.listens_for(Application, "before_update")
+def maintain_job_identity(mapper, connection, application):
+    from jobs.dedupe import normalize_text, normalize_url
+    application.normalized_company = normalize_text(application.company)
+    application.normalized_job_title = normalize_text(application.job_title)
+    application.canonical_job_url = normalize_url(application.job_url)
+
+
+class TrackerWorkspace(Base):
+    """One versioned personal tracker snapshot; never changes agent records."""
+    __tablename__ = 'tracker_workspace'
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    revision: Mapped[int] = mapped_column(Integer, nullable=False)
+    items_json: Mapped[str] = mapped_column(Text, nullable=False)
